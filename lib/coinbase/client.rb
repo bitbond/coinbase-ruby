@@ -252,6 +252,7 @@ module Coinbase
     def http_verb(verb, path, options={})
 
       nonce = options[:nonce] || (Time.now.to_f * 1e6).to_i
+      tfa_token = options.delete(:tfa_token)
 
       if [:get, :delete].include? verb
         request_options = {}
@@ -270,6 +271,7 @@ module Coinbase
         'ACCESS_NONCE' => nonce.to_s,
         "Content-Type" => "application/json",
       }
+      headers['CB-2FA-Token'] = tfa_token.to_s unless tfa_token.nil?
 
       request_options[:headers] = headers
 
