@@ -275,6 +275,8 @@ module Coinbase
 
       request_options[:headers] = headers
 
+      puts "Coinbase::Client -> sending: #{verb} #{path} #{request_options.merge(ssl_options)}!"
+
       r = self.class.send(verb, path, request_options.merge(ssl_options))
       hash = Hashie::Mash.new(JSON.parse(r.body))
       raise Error.new(hash.error) if hash.error
