@@ -49,7 +49,10 @@ module Coinbase
       if [:get, :delete].include? verb
         request_options = {params: options}
       else
-        request_options = {headers: {"Content-Type" => "application/json"}, body: options.to_json}
+        tfa_token = options.delete(:tfa_token)
+        headers = {"Content-Type" => "application/json"}
+        headers['CB-2FA-Token'] = tfa_token.to_s unless tfa_token.nil?
+        request_options = {headers: headers, body: options.to_json}
       end
       response = oauth_token.request(verb, path, request_options)
 

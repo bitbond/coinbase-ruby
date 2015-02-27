@@ -109,6 +109,17 @@ r.transaction.notes
 => "thanks for the coffee!"
 ```
 
+If the user has two-factor authentication enabled, you can pass the token as a
+parmeter to send_money method.
+
+```ruby
+r = coinbase.send_money 'user@example.com', 1.23
+# raises exception, user receives the token (sms, authenticator etc)
+r = coinbase.send_money 'uses@example.com', 1.23, tfa_token: 'token'
+r.success?
+=> true
+```
+
 ### Request bitcoin
 
 This will send an email to the recipient, requesting payment, and give them an easy way to pay.
@@ -332,6 +343,7 @@ coinbase.get('/account/balance').to_hash
 ```
 
 Or feel free to add a new wrapper method and submit a pull request.
+
 
 ## Security Notes
 

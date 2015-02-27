@@ -49,6 +49,15 @@ describe Coinbase::Client do
     FakeWeb.last_request.path.should include("page=3")
   end
 
+
+  it "should send money with two factor authentication" do
+    response = {"success"=>true, "transaction"=>{"id"=>"501a1791f8182b2071000087", "created_at"=>"2012-08-01T23:00:49-07:00", "notes"=>"Sample transaction for you!", "amount"=>{"amount"=>"-1.23400000", "currency"=>"BTC"}, "request"=>false, "status"=>"pending", "sender"=>{"id"=>"5011f33df8182b142400000e", "name"=>"User Two", "email"=>"user2@example.com"}, "recipient"=>{"id"=>"5011f33df8182b142400000a", "name"=>"User One", "email"=>"user1@example.com"}}}
+    fake :post, '/transactions/send_money', response
+    r = @c.send_money "user1@example.com", 1.2345, "Sample transaction for you", tfa_token: "2fatoken"
+    FakeWeb.last_request['CB-2FA-Token'].should == '2fatoken'
+    r.success.should == true
+  end
+
   it "should refresh an expired token" do
     credentials = @credentials.dup
     credentials[:expires_at] = Time.now.to_i - 100
